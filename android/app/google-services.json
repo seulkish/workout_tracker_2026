@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147529863669",
+    "project_id": "workouttracker2026kiki",
+    "storage_bucket": "workouttracker2026kiki.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147529863669:android:879ef493e21e06c8f510bc",
+        "android_client_info": {
+          "package_name": "com.sklee.workout_tracker_2026"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALnBmd42ajx4h4NgwTXJWb0zFZIx5iWQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

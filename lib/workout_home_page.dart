@@ -104,6 +104,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                   ),
                 ],
               ),
+              //Today
               Expanded(
                 flex: 3,
                 child: Row(
@@ -199,6 +200,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                         ),
                       ),
                     ),
+                    // Monthly
                     Expanded(
                       child: DashboardCard(
                         icon: Icon(
@@ -213,7 +215,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                           ),
                         ),
                         info: FutureBuilder(
-                          future: WorkoutManager.getTodayWorkoutMinutes(),
+                          future: WorkoutManager.getMonthWorkoutMinutes(),
                           builder: (context, asyncSnapshot) {
                             if (asyncSnapshot.connectionState == ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator(),);

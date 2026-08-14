@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'workout.dart';
 import 'workout_group.dart';
@@ -61,13 +62,32 @@ class WorkoutManager{
 
   static final asyncPrefs = SharedPreferencesAsync();
 
-  static void increaseTodayWorkoutMinutes(int minutes) async{
+  // 운동시간 통계 key
+  static String get todayKey =>
+    'todayMinutes_${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+  static String get monthKey =>
+    'monthMinutes_${DateFormat('yyyy-MM').format(DateTime.now())}';
+
+  // 소모 칼로리 통계 key
+  static String get todayKcalKey =>
+      'todayKcal_${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+
+  static String get monthKcalKey =>
+      'monthKcal_${DateFormat('yyyy-MM').format(DateTime.now())}';
+
+  static void increaseWorkoutMinutes(int minutes) async{
     int todayMinutes = await getTodayWorkoutMinutes();
-    await asyncPrefs.setInt('todayMinutes', minutes+todayMinutes);
+    int monthMinutes = await getMonthWorkoutMinutes();
+    await asyncPrefs.setInt('todayMinutes', todayMinutes+minutes);
+    await asyncPrefs.setInt('monthMinutes', monthMinutes+minutes);
   }
   static Future<int> getTodayWorkoutMinutes() async{
-    int todayMinutes = await asyncPrefs.getInt('todayMinutes')??0;
+    int todayMinutes = await asyncPrefs.getInt(todayKey)??0;
     return todayMinutes;
   }
-  static Future<>
+  static Future<int> getMonthWorkoutMinutes() async{
+    int monthMinutes = await asyncPrefs.getInt(monthKey)??0;
+    return monthMinutes;
+  }
+
 }
