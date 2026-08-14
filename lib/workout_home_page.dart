@@ -16,18 +16,49 @@ class WorkoutHomePage extends StatefulWidget {
 
 class _WorkoutHomePageState extends State<WorkoutHomePage> {
   final f1 = NumberFormat.decimalPattern('ko_KR');
-  late Future<int> myFuture;
+  late Future<({int minutes, int kcal})> myTodayFuture;
+  late Future<({int minutes, int kcal})> myMonthFuture;
+  void _loadWorkoutStats() {
+    myTodayFuture = _getTodayWorkoutStats();
+    myMonthFuture = _getMonthWorkoutStats();
+  }
+  Future<({int minutes, int kcal})> _getTodayWorkoutStats() async {
+    final minutesFuture =
+    WorkoutManager.getTodayWorkoutMinutes();
+
+    final kcalFuture =
+    WorkoutManager.getTodayWorkoutKcal();
+
+    return (
+    minutes: await minutesFuture,
+    kcal: await kcalFuture,
+    );
+  }
+
+  Future<({int minutes, int kcal})> _getMonthWorkoutStats() async {
+    final minutesFuture =
+    WorkoutManager.getMonthWorkoutMinutes();
+
+    final kcalFuture =
+    WorkoutManager.getMonthWorkoutKcal();
+
+    return (
+    minutes: await minutesFuture,
+    kcal: await kcalFuture,
+    );
+  }
+
   @override
   void initState(){
     super.initState();
-    myFuture = WorkoutManager.getTodayWorkoutMinutes();
+    _loadWorkoutStats();
   }
 
   @override
   void didUpdateWidget(covariant WorkoutHomePage oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    myFuture = WorkoutManager.getTodayWorkoutMinutes();
+    _loadWorkoutStats();
   }
 
   @override
@@ -123,7 +154,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                           ),
                         ),
                         info: FutureBuilder(
-                          future: myFuture,
+                          future: myTodayFuture,
                           builder: (context, asyncSnapshot) {
                             if(asyncSnapshot.connectionState == ConnectionState.waiting){
                               return Center(child: CircularProgressIndicator(),);
@@ -131,7 +162,8 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                             if(asyncSnapshot.hasError){
                               return Center(child: Text('-'),);
                             }
-                            int? data=asyncSnapshot.data;
+
+                            final data = asyncSnapshot.data ?? (minutes: 0, kcal: 0);
 
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -161,7 +193,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: '$data분',
+                                            text: '${data.minutes}분',
                                             style: TextStyle(
                                               fontSize: 28,
                                               fontWeight: FontWeight.bold,
@@ -183,7 +215,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                                       children: [
                                         TextSpan(text: '소모 칼로리\n'),
                                         TextSpan(
-                                          text: '2,400 kcal',
+                                          text: '${data.kcal} kcal',
                                           style: TextStyle(
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold,
@@ -214,8 +246,8 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        info: FutureBuilder(
-                          future: WorkoutManager.getMonthWorkoutMinutes(),
+                        info: FutureBuilder<({int minutes, int kcal})>(
+                          future: myMonthFuture,
                           builder: (context, asyncSnapshot) {
                             if (asyncSnapshot.connectionState == ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator(),);
@@ -224,7 +256,8 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                               return Center(child: Text('error'));
                             }
 
-                            int? data = asyncSnapshot.data;
+                            final data = asyncSnapshot.data ?? (minutes: 0, kcal: 0);
+
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               // mainAxisSize: MainAxisSize.min,
@@ -253,7 +286,7 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: '$data분',
+                                            text: '${data.minutes}분',
                                             style: TextStyle(
                                               fontSize: 28,
                                               fontWeight: FontWeight.bold,

@@ -75,12 +75,23 @@ class WorkoutManager{
   static String get monthKcalKey =>
       'monthKcal_${DateFormat('yyyy-MM').format(DateTime.now())}';
 
+  // 운동시간
   static void increaseWorkoutMinutes(int minutes) async{
     int todayMinutes = await getTodayWorkoutMinutes();
     int monthMinutes = await getMonthWorkoutMinutes();
-    await asyncPrefs.setInt('todayMinutes', todayMinutes+minutes);
-    await asyncPrefs.setInt('monthMinutes', monthMinutes+minutes);
+    await asyncPrefs.setInt(todayKey, todayMinutes+minutes);
+    await asyncPrefs.setInt(monthKey, monthMinutes+minutes);
   }
+
+  // 소모 칼로리
+  static void increaseWorkoutKcal(int kcal) async{
+    int todayKcal = await getTodayWorkoutKcal();
+    int monthKcal = await getMonthWorkoutKcal();
+    await asyncPrefs.setInt(todayKcalKey, todayKcal+kcal);
+    await asyncPrefs.setInt(monthKcalKey, monthKcal+kcal);
+  }
+
+  // 운동시간
   static Future<int> getTodayWorkoutMinutes() async{
     int todayMinutes = await asyncPrefs.getInt(todayKey)??0;
     return todayMinutes;
@@ -88,6 +99,16 @@ class WorkoutManager{
   static Future<int> getMonthWorkoutMinutes() async{
     int monthMinutes = await asyncPrefs.getInt(monthKey)??0;
     return monthMinutes;
+  }
+
+  // 소모 칼로리
+  static Future<int> getTodayWorkoutKcal() async{
+    int todayKcal = await asyncPrefs.getInt(todayKcalKey)??0;
+    return todayKcal;
+  }
+  static Future<int> getMonthWorkoutKcal() async{
+    int monthKcal = await asyncPrefs.getInt(monthKcalKey)??0;
+    return monthKcal;
   }
 
 }
