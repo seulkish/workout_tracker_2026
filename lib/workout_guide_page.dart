@@ -24,6 +24,7 @@ class _WorkoutGuidePageState extends State<WorkoutGuidePage> {
     super.initState();
     workoutIndex=widget.workoutsIndex;
     currentWorkout=workouts[workoutIndex];
+    WorkoutManager.increaseTodayWorkoutMinutes(currentWorkout.minutes);
   }
   void prevWorkout(){
     workoutIndex--;

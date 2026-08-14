@@ -1,6 +1,8 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
+import 'package:workout_tracker_2026/workout_manager.dart';
 import 'dashboard_card.dart';
 // import 'package:intl/intl_browser.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,21 @@ class WorkoutHomePage extends StatefulWidget {
 }
 
 class _WorkoutHomePageState extends State<WorkoutHomePage> {
+  final f1 = NumberFormat.decimalPattern('ko_KR');
+  late Future<int> myFuture;
+  @override
+  void initState(){
+    super.initState();
+    myFuture = WorkoutManager.getTodayWorkoutMinutes();
+  }
+
+  @override
+  void didUpdateWidget(covariant WorkoutHomePage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    myFuture = WorkoutManager.getTodayWorkoutMinutes();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -104,68 +121,81 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                             color: colorScheme.outline,
                           ),
                         ),
-                        info: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          // mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // SizedBox(height: 10),
-                            Stack(
-                              alignment: Alignment.center,
+                        info: FutureBuilder(
+                          future: myFuture,
+                          builder: (context, asyncSnapshot) {
+                            if(asyncSnapshot.connectionState == ConnectionState.waiting){
+                              return Center(child: CircularProgressIndicator(),);
+                            }
+                            if(asyncSnapshot.hasError){
+                              return Center(child: Text('-'),);
+                            }
+                            int? data=asyncSnapshot.data;
+
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              // mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(
-                                  width: 120,
-                                  height: 120,
-                                  child: CircularProgressIndicator(
-                                    value: 0.9,
-                                    strokeWidth: 8,
-                                    backgroundColor: colorScheme.outlineVariant,
-                                  ),
-                                ),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '운동시간\n',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: colorScheme.outline,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '450분',
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                            // SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 30),
-                              child: Text.rich(
-                                textAlign: TextAlign.center,
-                                TextSpan(
+                                // SizedBox(height: 10),
+                                Stack(
+                                  alignment: Alignment.center,
                                   children: [
-                                    TextSpan(text: '소모 칼로리\n'),
-                                    TextSpan(
-                                      text: '2,400 kcal',
-                                      style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.primary,
+                                    SizedBox(
+                                      width: 120,
+                                      height: 120,
+                                      child: CircularProgressIndicator(
+                                        value: 0.9,
+                                        strokeWidth: 8,
+                                        backgroundColor: colorScheme.outlineVariant,
                                       ),
+                                    ),
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '운동시간\n',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: colorScheme.outline,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '$data분',
+                                            style: TextStyle(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: colorScheme.primary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
-                              ),
-                            ),
-                          ],
+                                // SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 30),
+                                  child: Text.rich(
+                                    textAlign: TextAlign.center,
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(text: '소모 칼로리\n'),
+                                        TextSpan(
+                                          text: '2,400 kcal',
+                                          style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -182,81 +212,94 @@ class _WorkoutHomePageState extends State<WorkoutHomePage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        info: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          // mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // SizedBox(height: 10),
-                            Stack(
-                              alignment: Alignment.center,
+                        info: FutureBuilder(
+                          future: WorkoutManager.getTodayWorkoutMinutes(),
+                          builder: (context, asyncSnapshot) {
+                            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator(),);
+                            }
+                            if (asyncSnapshot.hasError) {
+                              return Center(child: Text('error'));
+                            }
+
+                            int? data = asyncSnapshot.data;
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              // mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(
-                                  width: 120,
-                                  height: 120,
-                                  child: CircularProgressIndicator(
-                                    value: 0.9,
-                                    strokeWidth: 8,
-                                    backgroundColor: colorScheme.outlineVariant,
-                                  ),
-                                ),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '운동시간\n',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: colorScheme.outline,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '450분',
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                            // SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 30),
-                              child: Text.rich(
-                                textAlign: TextAlign.center,
-                                TextSpan(
+                                // SizedBox(height: 10),
+                                Stack(
+                                  alignment: Alignment.center,
                                   children: [
-                                    TextSpan(
-                                      text: '지난달 대비\n',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                    SizedBox(
+                                      width: 120,
+                                      height: 120,
+                                      child: CircularProgressIndicator(
+                                        value: 0.9,
+                                        strokeWidth: 8,
+                                        backgroundColor: colorScheme.outlineVariant,
                                       ),
                                     ),
-                                    TextSpan(
-                                      text: '10시간',
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.primary,
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '운동시간\n',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: colorScheme.outline,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '$data분',
+                                            style: TextStyle(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: colorScheme.primary,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    TextSpan(
-                                      text: ' 더 했어요',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
-                              ),
-                            ),
-                          ],
+                                // SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 30),
+                                  child: Text.rich(
+                                    textAlign: TextAlign.center,
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '지난달 대비\n',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '10시간',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' 더 했어요',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ),
