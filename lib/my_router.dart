@@ -7,6 +7,7 @@ import 'package:workout_tracker_2026/workout_guide_page.dart';
 import 'package:workout_tracker_2026/workout_home_page.dart';
 import 'package:workout_tracker_2026/workout_list_page.dart';
 import 'package:workout_tracker_2026/workout_shell.dart';
+import 'registration_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey= GlobalKey<NavigatorState>(debugLabel:'root');
 final GlobalKey<NavigatorState> _homeNavigatorKey= GlobalKey<NavigatorState>(debugLabel:'home');
@@ -66,6 +67,12 @@ final router = GoRouter(
                   GoRoute(
                     path: 'login',
                     builder: (context, state) => LoginPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'registration',
+                        builder: (context, state) => RegistrationPage(),
+                      ),
+                    ],
                   )
                 ]
               ),

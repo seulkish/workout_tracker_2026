@@ -1,6 +1,8 @@
 // filename: registration_page.dart
 import 'package:flutter/material.dart';
 
+import 'firebase_auth_service.dart';
+
 class RegistrationPage extends StatelessWidget {
   RegistrationPage({super.key});
   final _formKey = GlobalKey<FormState>();
@@ -8,6 +10,8 @@ class RegistrationPage extends StatelessWidget {
   String? email;
   String? password;
   final TextEditingController _passwordController = TextEditingController();
+  FirebaseAuthService _auth=FirebaseAuthService();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -63,7 +67,15 @@ class RegistrationPage extends StatelessWidget {
                     border: UnderlineInputBorder(),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
-
+                  validator: (value){
+                    if(value==null || value.isEmpty){
+                      return '이름을 입력하세요';
+                    }
+                    return null;
+                  },
+                  onSaved: (value){
+                    name=value;
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -75,7 +87,15 @@ class RegistrationPage extends StatelessWidget {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   keyboardType: TextInputType.emailAddress,
-
+                  validator: (value){
+                    if(value==null || value.isEmpty){
+                      return '이름을 입력하세요';
+                    }
+                    return null;
+                  },
+                  onSaved: (value){
+                    name=value;
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -92,7 +112,18 @@ class RegistrationPage extends StatelessWidget {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   obscureText: true,
-
+                  validator: (value){
+                    if(value==null || value.isEmpty){
+                      return '패스워드를 입력하세요';
+                    }
+                    if(value.length < 6){
+                      return '6자리 이상 입력하세요';
+                    } // firebase가 6자리 이하는 지원하지 않음
+                    return null;
+                  },
+                  onSaved: (value){
+                    password=value;
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -104,7 +135,18 @@ class RegistrationPage extends StatelessWidget {
                     border: UnderlineInputBorder(),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
-                  
+                  validator: (value){
+                    if(value==null || value.isEmpty){
+                      return '비밀번호를 한번더 입력하세요';
+                    }
+                    else if (value != [password]){
+                      return '비밀번호가 일치하지 않습니다';
+                    }
+                    return null;
+                  },
+                  onSaved: (value){
+                    password=value;
+                  },
 
                 ),
                 SizedBox(height: 16),
@@ -112,8 +154,9 @@ class RegistrationPage extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
+                      if (_formKey.currentState?.validate() ?? false) {
+                        _formKey.currentState?.save();
+                        _auth.signUpWithEmail(email: email!, password: password!, name: name);
                       }
                     },
                     style: ElevatedButton.styleFrom(

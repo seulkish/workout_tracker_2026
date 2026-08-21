@@ -1,5 +1,6 @@
 //filename:login_page.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -151,7 +152,9 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Text('Don\'t have an account?'),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.go('/settings/login/registration');
+                      },
                       child: Text('Sign up'),
                     )
                   ],
