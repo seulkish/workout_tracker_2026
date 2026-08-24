@@ -1,9 +1,11 @@
 //filename:profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:workout_tracker_2026/firebase_auth_service.dart';
-import 'package:workout_tracker_2026/show_snackbar.dart';
+import 'firebase_auth_service.dart';
+import 'show_snackbar.dart';
 import 'firebase_storage_service.dart';
+import 'reauthentication_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -214,7 +216,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Text('|'),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        // await _auth.deleteAccount();
+                        showReauthenticationDialog(context, _auth);
+                        showSnackbar(context, '탈퇴처리가 완료되었습니다.');
+                        context.go('/settings/login');
+                      }
+                      catch(e) {
+                        showSnackbar(context, e.toString());
+                      }
+                    },
                     child: Text(
                       '회원탈퇴',
                       style: TextStyle(

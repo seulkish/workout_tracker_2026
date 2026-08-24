@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'firebase_auth_service.dart';
+import 'show_snackbar.dart';
 
 Future<String?> showReauthenticationDialog(BuildContext context, FirebaseAuthService auth) {
   final TextEditingController passwordController = TextEditingController();
@@ -25,7 +26,13 @@ Future<String?> showReauthenticationDialog(BuildContext context, FirebaseAuthSer
           ),
           ElevatedButton(
             onPressed: () async{
-
+              try{
+                await auth.reauthenticateAndDeleteAccount(passwordController.text);
+                context.go('/settings/login');
+              } catch(e){
+                showSnackbar(context, e.toString());
+              }
+              Navigator.pop(context);
             },
             child: Text('탈퇴하기'),
           ),

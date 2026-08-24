@@ -7,8 +7,8 @@ import 'firebase_auth_service.dart';
 class ResetPasswordPage extends StatelessWidget {
   ResetPasswordPage({super.key});
   final _formKey = GlobalKey<FormState>();
-
   String? email;
+  FirebaseAuthService _auth = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,13 @@ class ResetPasswordPage extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        //some action here
+                        //비밀번호 재설정 이메일 발송 기능
+                        _auth.resetPassword(email: email!)
+                            .then((value){
+                          showSnackbar(context, '비밀번호 재설정 이메일이 발송되었습니다.');
+                        }).catchError((error){
+                          showSnackbar(context, error.toString());
+                        });
                       }
                     },
                     style: ElevatedButton.styleFrom(

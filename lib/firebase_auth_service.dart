@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:workout_tracker_2026/show_snackbar.dart';
+import 'reauthentication_dialog.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth;
@@ -76,13 +78,88 @@ class FirebaseAuthService {
   bool isLoggedIn() {
     return _auth.currentUser != null;
   }
-  Future<void> resetPassword(String email) async {
+  Future<void> resetPassword({
+    required String email,
+  }) async {
     // 비밀번호 재설정 코드 작성
+    String? errorMessage;
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    }
+    on FirebaseAuthException catch(e){
+      switch (e.code) {
+        case 'auth/user-not-found':
+          errorMessage = '해당 이메일로 가입된 사용자가 없습니다.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = '유효하지 않은 이메일입니다.';
+          break;
+        default:
+          errorMessage = e.message ?? '알 수 없는 오류가 발생했습니다.';
+      }
+    }
+    catch (e) {
+      errorMessage = '알 수 없는 오류가 발생했습니다';
+    }
+    if(errorMessage != null){
+      throw Exception(errorMessage);
+    }
   }
 
   Future<void> deleteAccount() async {
     //계정삭제 코드 작성
+    try {
+      await _auth.currentUser?.delete();
+    }
+    catch (e) {
+      print('Error: $e');
+      throw Exception('탈퇴 중 에러 발생: $e');
+    // } on FirebaseAuthException catch(e) {
+    //   if (e.code == 'requires-recent-login') {
+    //     rethrow;
+    //   } else {
+    //     throw Exception('탈퇴과정 중 문제 발생: ${e.toString()}');
+    //   }
+    }
   }
+
+  Future<void> reauthenticateAndDeleteAccount(String password) async {
+    String? errorMessage;
+    try{
+      final user = _auth.currentUser;
+
+      if (user == null) {
+        throw Exception('로그인된 사용자가 없습니다.');
+      }
+
+      final email = user.email;
+
+      if (email == null || email.isEmpty) {
+        throw Exception('이메일 정보가 없습니다.');
+      }
+
+      // 현재 사용자의 이메일과 비밀번호 인증 정보 생성
+      AuthCredential credential = EmailAuthProvider.credential(
+          email: email,
+          password: password,
+      );
+
+      // 사용자 재인증
+      await user.reauthenticateWithCredential(credential);
+      // 계정 삭제
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      errorMessage = switch (e.code) {
+        'wrong-password' || 'invalid-credential' => '잘못된 비밀번호입니다.',
+        'too-many-requests' =>
+        '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+        _ =>
+        e.message ?? '회원 탈퇴에 실패했습니다.',
+      };
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<void> updateProfile() async {
     //
   }

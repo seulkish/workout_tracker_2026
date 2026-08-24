@@ -1,15 +1,18 @@
+//my_router.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:workout_tracker_2026/landing_page.dart';
 import 'package:workout_tracker_2026/login_page.dart';
+import 'package:workout_tracker_2026/reset_password_page.dart';
 import 'package:workout_tracker_2026/settings_page.dart';
 import 'package:workout_tracker_2026/workout_guide_page.dart';
 import 'package:workout_tracker_2026/workout_home_page.dart';
 import 'package:workout_tracker_2026/workout_list_page.dart';
 import 'package:workout_tracker_2026/workout_shell.dart';
-import 'login_page.dart';
-import 'registration_page.dart';
-import 'profile_page.dart';
+import 'package:workout_tracker_2026/registration_page.dart';
+import 'package:workout_tracker_2026/profile_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey= GlobalKey<NavigatorState>(debugLabel:'root');
 final GlobalKey<NavigatorState> _homeNavigatorKey= GlobalKey<NavigatorState>(debugLabel:'home');
@@ -74,8 +77,13 @@ final router = GoRouter(
                         path: 'registration',
                         builder: (context, state) => RegistrationPage(),
                       ),
+                      GoRoute(
+                        path: 'reset_password',
+                        builder: (context, state) => ResetPasswordPage(),
+                      ),
                     ],
                   ),
+
                   GoRoute(
                     path: 'profile',
                     builder: (context, state) => ProfilePage(),
@@ -87,6 +95,24 @@ final router = GoRouter(
         ]
     ),
   ],
+  redirect: (context, state) {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    debugPrint('현재 경로: ${state.uri.path}');
+    debugPrint('전체 URI: ${state.uri}');
+    debugPrint('로그인 여부: ${user != null}');
+
+    if ( (user == null) &&
+        (state.uri.path != '/settings/login/registration' &&
+            state.uri.path != '/settings/login/reset_password' &&
+            state.uri.path != '/')) {
+      return '/settings/login';
+    }
+    //settings tab 클릭했을 때
+    if(user !=null && (state.uri.path == '/settings/login' || state.uri.path == '/settings/login/registration')){
+      return '/settings';
+    }
+  },
 );
 /*
 *
