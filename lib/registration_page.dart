@@ -1,5 +1,6 @@
 // filename: registration_page.dart
 import 'package:flutter/material.dart';
+import 'package:workout_tracker_2026/show_snackbar.dart';
 
 import 'firebase_auth_service.dart';
 
@@ -89,12 +90,12 @@ class RegistrationPage extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value){
                     if(value==null || value.isEmpty){
-                      return '이름을 입력하세요';
+                      return '이메일을 입력하세요';
                     }
                     return null;
                   },
                   onSaved: (value){
-                    name=value;
+                    email=value;
                   },
                 ),
                 SizedBox(height: 16),
@@ -139,7 +140,7 @@ class RegistrationPage extends StatelessWidget {
                     if(value==null || value.isEmpty){
                       return '비밀번호를 한번더 입력하세요';
                     }
-                    else if (value != [password]){
+                    else if (value != _passwordController.text){
                       return '비밀번호가 일치하지 않습니다';
                     }
                     return null;
@@ -156,7 +157,17 @@ class RegistrationPage extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
                         _formKey.currentState?.save();
-                        _auth.signUpWithEmail(email: email!, password: password!, name: name);
+                        _auth.signUpWithEmail(
+                            email: email!,
+                            password: password!,
+                            name: name
+                        ).then((value){
+                          //success data, return data
+
+                        }).catchError((error){
+                          //throw된 Exception 객체
+                          showSnackbar(context, '$error');
+                        });
                       }
                     },
                     style: ElevatedButton.styleFrom(

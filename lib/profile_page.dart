@@ -1,5 +1,9 @@
 //filename:profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:workout_tracker_2026/firebase_auth_service.dart';
+import 'package:workout_tracker_2026/show_snackbar.dart';
+import 'firebase_storage_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -9,10 +13,44 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final _auth = FirebaseAuthService();
+  final _storage = FirebaseStorageService();
   final _formKey = GlobalKey<FormState>();
   String? name;
   String? email;
   String? profileImageURL;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async{
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if(pickedFile != null){
+      String? downloadUrl;
+      try {
+        downloadUrl = await _storage.uploadProfileImage(
+          bytes: await pickedFile.readAsBytes(),
+          path: pickedFile.path,
+          uid: _auth.user?.uid,
+        );
+
+        await _auth.updatePhotoUrl(downloadUrl);
+
+        setState(() {
+          profileImageURL=downloadUrl;
+        });
+      } catch (e){
+        //error 처리
+        showSnackbar(context, '$e');
+      }
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    name = _auth.user?.displayName;
+    email = _auth.user?.email;
+    profileImageURL = _auth.user?.photoURL;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +77,25 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: 1.0,
                         ),
                       ),
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundImage:
-                        profileImageURL != null
-                            ? NetworkImage(profileImageURL!)
-                            : const AssetImage('assets/me.png'),
-                        onBackgroundImageError: (_, __) {
-                          setState(() {
-                            profileImageURL = null;
-                          });
-                        },
-                        backgroundColor: Colors.transparent,
-                        child:Icon(
-                          Icons.camera_alt,
-                          size: textTheme.headlineMedium?.fontSize,
-                          color: colorScheme.onPrimary,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundImage:
+                          profileImageURL != null
+                              ? NetworkImage(profileImageURL!)
+                              : const AssetImage('assets/me.png'),
+                          onBackgroundImageError: (_, __) {
+                            setState(() {
+                              profileImageURL = null;
+                            });
+                          },
+                          backgroundColor: Colors.transparent,
+                          child:Icon(
+                            Icons.camera_alt,
+                            size: textTheme.headlineMedium?.fontSize,
+                            color: colorScheme.onPrimary,
+                          ),
                         ),
                       ),
                     ),
@@ -72,7 +113,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: IconButton(
                             padding: EdgeInsets.zero,
                             icon: Icon(Icons.close, color: colorScheme.onPrimary),
-                            onPressed: () {},
+                            onPressed: () {
+                              _auth.deletePhotoUrl().catchError((error){
+                                showSnackbar(context, '$error');
+                              });
+                              _storage.deleteProfileImage(_auth.user?.uid).catchError((error){
+                                showSnackbar(context, '$error');
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -81,6 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextFormField(
+                initialValue: name,
                 decoration: InputDecoration(
                   labelText: 'Name',
                   labelStyle: textTheme.titleLarge,
@@ -102,6 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               TextFormField(
                 enabled: false,
+                initialValue: email,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   labelStyle: textTheme.titleLarge,

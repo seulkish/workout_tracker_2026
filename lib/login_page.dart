@@ -1,12 +1,15 @@
 //filename:login_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_tracker_2026/show_snackbar.dart';
+import 'firebase_auth_service.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
+  FirebaseAuthService _auth=FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +133,13 @@ class LoginPage extends StatelessWidget {
                         _formKey.currentState?.save();
                         //backend 전송 : email, password
                         //fb.auth.login(email, password);
+                        _auth.signInWithEmail(email: email!, password: password!)
+                            .then((value){
+                              showSnackbar(context, '로그인 성공');
+                              context.go('/workout_home');
+                        })
+                            .catchError((error){showSnackbar(context, '$error');
+                        });
                       }
                     },
                     style: ElevatedButton.styleFrom(
