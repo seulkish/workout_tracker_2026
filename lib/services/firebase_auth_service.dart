@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workout_tracker_2026/show_snackbar.dart';
-import 'reauthentication_dialog.dart';
+import '../widgets/reauthentication_dialog.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth;

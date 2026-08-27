@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:workout_tracker_2026/workout.dart';
+import 'package:workout_tracker_2026/models/workout.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_tracker_2026/workout_manager.dart';
+import 'package:workout_tracker_2026/logic/workout_manager.dart';
 
 class WorkoutListPage extends StatelessWidget {
   int groupIndex;

@@ -1,7 +1,7 @@
 //filename:reset_password_page.dart
 import 'package:flutter/material.dart';
 import 'package:workout_tracker_2026/show_snackbar.dart';
-import 'firebase_auth_service.dart';
+import '../services/firebase_auth_service.dart';
 
 
 class ResetPasswordPage extends StatelessWidget {

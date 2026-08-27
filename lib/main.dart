@@ -1,14 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:workout_tracker_2026/logic/my_workout_provider.dart';
 import 'firebase_options.dart';
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'workout_list_page.dart';
-import 'workout_guide_page.dart' as original;
-import 'workout_guide_page_test.dart' as testPage;
+import 'pages/workout_list_page.dart';
+import 'pages/workout_guide_page.dart' as original;
+import 'pages/workout_guide_page_test.dart' as testPage;
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'duolingo_home.dart';
-import 'duolingo_study_page.dart';
-import 'workout_home_page.dart';
+import 'test_tutorial/duolingo_home.dart';
+import 'pages/duolingo_study_page.dart';
+import 'pages/workout_home_page.dart';
 import 'my_router.dart';
 
 void main() async {
@@ -25,11 +26,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp.router(
-      routerConfig: router,
-      theme: FlexThemeData.light(scheme: FlexScheme.blue),
-      darkTheme: FlexThemeData.dark(scheme: FlexScheme.redWine),
-      themeMode: ThemeMode.system,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> MyWorkoutProvider()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        theme: FlexThemeData.light(scheme: FlexScheme.blue),
+        darkTheme: FlexThemeData.dark(scheme: FlexScheme.redWine),
+        themeMode: ThemeMode.system,
+      ),
     );
 
     // return MaterialApp(

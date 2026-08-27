@@ -4,6 +4,26 @@ import 'package:flutter/foundation.dart';
 class FirebaseStorageService {
   final storageRef = FirebaseStorage.instance.ref();
 
+  Future<String> uploadWorkoutImage({
+    required Uint8List bytes,
+    required String path,
+    required int pickedFileHash,
+  }) async {
+    try{
+      final imageRef=storageRef.child('my_workouts/${pickedFileHash}_workout_image.png');
+      final metadata=SettableMetadata(
+          contentType: 'image/png',
+          customMetadata:{'picked-file-path': path}
+      );
+      await imageRef.putData(bytes, metadata);
+      final downloadUrl=await imageRef.getDownloadURL();
+      return downloadUrl;
+    }catch(e){
+      throw Exception('upload 실패 : $e');
+    }
+    return '';
+  }
+
   Future<void> deleteProfileImage(String? uid) async {
     if(uid==null) throw Exception('잘못된 접근');
     final profileRef=storageRef.child('user_profiles/${uid}_profile_image.png');

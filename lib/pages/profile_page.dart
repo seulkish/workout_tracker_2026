@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'firebase_auth_service.dart';
-import 'show_snackbar.dart';
-import 'firebase_storage_service.dart';
-import 'reauthentication_dialog.dart';
+import '../services/firebase_auth_service.dart';
+import '../show_snackbar.dart';
+import '../services/firebase_storage_service.dart';
+import '../widgets/reauthentication_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

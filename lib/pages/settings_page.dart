@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_tracker_2026/show_snackbar.dart';
-import 'firebase_auth_service.dart';
-import 'widgets/item_card.dart';
+import '../services/firebase_auth_service.dart';
+import '../widgets/item_card.dart';
 
 class SettingsPage extends StatelessWidget {
   static String id = 'setings_page';
