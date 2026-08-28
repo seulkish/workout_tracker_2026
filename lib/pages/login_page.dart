@@ -81,7 +81,9 @@ class LoginPage extends StatelessWidget {
                     if(value==null || value.isEmpty){
                       return '이메일을 입력하세요';
                     }
-                    //@가 들어있는지 체크하는 로직 추가 필요
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                      return '올바른 이메일 형식을 입력하세요';
+                    }
                     return null;
                   },
                   onSaved: (value){
