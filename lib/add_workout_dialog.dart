@@ -148,7 +148,6 @@ class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
                 border: UnderlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
-
             ),
           ),
           Container(
@@ -163,10 +162,16 @@ class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
             width: double.infinity,
             child: TextButton(
               onPressed: () async {
-                uploadWorkout(_pickedFile);
+                newWorkoutImageUrl=await uploadWorkout(_pickedFile);
                 print(newWorkoutImageUrl);
                 print(newWorkoutTitle);
                 print(newWorkoutMinutes);
+
+                if (_pickedFile == null) {
+                  showSnackbar(context, '이미지를 먼저 선택해 주세요.');
+                  return;
+                }
+
                 Provider.of<MyWorkoutProvider>(context, listen: false).addMyWorkout(
                  MyWorkout(
                    name: newWorkoutTitle!,
@@ -176,6 +181,8 @@ class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
                 );
                 //위와 같은 코드
                 // context.read<MyWorkoutProvider>;
+
+                Navigator.pop(context);
               },
               child: Text(
                 '운동 추가',

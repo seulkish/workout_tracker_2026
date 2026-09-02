@@ -1,3 +1,4 @@
+//my_workout_lost_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,9 +6,42 @@ import '../models/my_workout.dart';
 import '../widgets/workout_tile.dart';
 import '../add_workout_dialog.dart';
 import '../logic/my_workout_provider.dart';
+import '../sample_data.dart';
 
-class MyWorkoutListPage extends StatelessWidget {
+class MyWorkoutListPage extends StatefulWidget {
   MyWorkoutListPage({super.key});
+
+  @override
+  State<MyWorkoutListPage> createState() => _MyWorkoutListPageState();
+}
+
+class _MyWorkoutListPageState extends State<MyWorkoutListPage> {
+  final ScrollController _scrollController = ScrollController();
+  void _scrollListener(){
+    if(_scrollController.position.pixels >= _scrollController.position.maxScrollExtent){
+      // print('dd');
+      Provider.of<MyWorkoutProvider>(context, listen: false).fetchAllMyWorkouts();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      Provider.of<MyWorkoutProvider>(context,listen:false).fetchAllMyWorkouts();
+    });
+    // SampleData.insertSampleData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +53,14 @@ class MyWorkoutListPage extends StatelessWidget {
       body: Consumer<MyWorkoutProvider>(
         builder: (context, myWorkoutProvider, child) {
           List<MyWorkout> workouts = myWorkoutProvider.workouts;
+          if(workouts.isEmpty){
+            return Center(
+              child: Text('등록된 운동이 없습니다.'),
+            );
+          }
           return ListView.builder(
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
             itemCount: workouts.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
