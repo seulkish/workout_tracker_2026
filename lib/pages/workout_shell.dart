@@ -18,6 +18,11 @@ class WorkoutShell extends StatelessWidget {
             label: 'Home',
           ),
           NavigationDestination(
+            selectedIcon: Icon(Icons.article),
+            icon: Icon(Icons.article_outlined),
+            label: 'Article',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             label: 'Settings',
           ),

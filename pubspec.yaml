@@ -44,6 +44,7 @@ dependencies:
   firebase_storage: ^13.4.6
   provider: ^6.1.5+1
   cloud_firestore: ^6.8.0 #6.9.0은 3일전(8/25)에 해서 호환 안되어서
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:

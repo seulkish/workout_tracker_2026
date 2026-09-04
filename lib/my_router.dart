@@ -15,6 +15,7 @@ import 'package:workout_tracker_2026/pages/registration_page.dart';
 import 'package:workout_tracker_2026/pages/profile_page.dart';
 
 import 'pages/my_workout_list_page.dart';
+import 'pages/workout_article_list_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
@@ -24,6 +25,8 @@ final GlobalKey<NavigatorState> _homeNavigatorKey = GlobalKey<NavigatorState>(
 );
 final GlobalKey<NavigatorState> _settingsNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'settings');
+final GlobalKey<NavigatorState> _articleNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'article');
 
 // GoRouter configuration
 final router = GoRouter(
@@ -70,6 +73,15 @@ final router = GoRouter(
                   ],
                 ),
               ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _articleNavigatorKey,
+          routes: [
+            GoRoute(
+              path: '/articles',
+              builder: (context, state) => const WorkoutArticleListPage(),
             ),
           ],
         ),
